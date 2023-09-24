@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: xxx
+    password: xxx
+    url: xxx
+  mybatis-plus:
+    configuration:
+      log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  data:
+    generate-count: 10
+    thread:
+      core-num: 10
+      max-num: 10
+      keep-alive-time: 10
+      block-queue-length: 10
