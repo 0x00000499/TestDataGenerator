@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.LinkedList;
+import java.util.Scanner;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @Component
@@ -21,19 +23,35 @@ public class DBOperationHandler {
     @Autowired
     private DataGenerateStrategy dataGenerateStrategy;
     @Autowired
-    private DataService personService;
+    private DataService dataService;
     @Value("${data.thread.use-num}")
     Long threadNum;
     public void GenerateDataToDB(){
+        // 单线程插入数据量
+        long singleInsertCount = this.generateCount / threadNum;
         // 提交线程
         for(int i = 0; i < threadNum; i++){
-            threadPoolExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    LinkedList<Data> data = new LinkedList<>();
-
-                }
-            });
+            long threadGenerateCount = Math.min(this.generateCount, singleInsertCount);
+            this.generateCount -= threadGenerateCount;
+            if(threadGenerateCount > 0){
+                threadPoolExecutor.submit(new Callable<Object>() {
+                    @Override
+                    public Object call() {
+                        LinkedList<Data> data = new LinkedList<>();
+                        for (int j = 0; j < threadGenerateCount; j++) {
+                            data.add(dataGenerateStrategy.generateData());
+                            if(j % 100 == 0){
+                                dataService.saveBatch(data);
+                                data.clear();
+                            }
+                        }
+                        if(!data.isEmpty()){
+                            dataService.saveBatch(data);
+                        }
+                        return null;
+                    }
+                });
+            }
         }
     }
 }

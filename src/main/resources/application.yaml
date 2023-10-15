@@ -10,9 +10,10 @@ spring:
     configuration:
       log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   data:
-    generate-count: 10
+    generate-count: 10000
     thread:
-      core-num: 10
-      max-num: 10
+      use-num: 80
+      core-num: 50
+      max-num: 100
       keep-alive-time: 10
       block-queue-length: 10

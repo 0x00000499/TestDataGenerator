@@ -10,16 +10,18 @@ import java.util.Date;
 @lombok.Data
 @TableName("person")
 public class Data {
-    @TableId(type = IdType.NONE)
+    @TableId(type = IdType.AUTO)
     private Long id;
     @TableField("person_id")
-    private Long personId;
+    private Integer personId;
     @TableField("person_name")
     private String personName;
     private Integer age;
     private String company;
     private String address;
     private String phone;
+    @TableField("gmt_create")
     private Date gmtCreate;
+    @TableField("gmt_modified")
     private Date gmtModified;
 }
